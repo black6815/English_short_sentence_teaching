@@ -55,6 +55,8 @@ npm run line:simulate -- 狀態
 
 See `docs/LINE_BOT_SETUP.md` for LINE Developers setup and HTTPS tunnel notes.
 
+For the official LINE account/channel checklist, see `docs/LINE_OFFICIAL_CHECKLIST.md`.
+
 ## Content MVP
 
 Generate a reviewable daily phrase draft:

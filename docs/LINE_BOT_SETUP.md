@@ -77,9 +77,19 @@ Example webhook URL:
 https://your-tunnel-domain.example/line/webhook
 ```
 
+During initial setup, Cloudflare Tunnel quick tunnel was used:
+
+```powershell
+tools\cloudflared.exe tunnel --url http://127.0.0.1:3000 --no-autoupdate
+```
+
+Quick tunnel URLs are temporary. If cloudflared is restarted, update the LINE webhook URL again.
+
 ## LINE Developers Console
 
-Create a LINE Developers Messaging API channel, then:
+Use the official setup checklist in `docs/LINE_OFFICIAL_CHECKLIST.md`.
+
+After setup:
 
 - Enable webhook usage.
 - Set the webhook URL to your public HTTPS tunnel plus `/line/webhook`.
@@ -106,10 +116,8 @@ my id
 
 ## Next Steps
 
-1. Install Node.js LTS on this computer.
-2. Create the LINE Messaging API channel.
-3. Start the local bot server.
-4. Expose it with HTTPS tunneling.
-5. Verify webhook delivery from LINE Developers Console.
-6. Add `LINE_ALLOWED_USER_IDS` after getting the real user ID.
-7. Connect LINE commands to the local worker task queue.
+1. Keep the bot server and tunnel running while testing.
+2. Test real LINE commands: `help`, `狀態`, `我的ID`, `生成短句`.
+3. Add AI fallback for natural language conversation.
+4. Add a task queue for project modification requests from LINE.
+5. Connect safe low-risk tasks to the local worker.

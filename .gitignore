@@ -20,6 +20,8 @@ renders/
 models/
 ComfyUI/
 ollama/
+tools/
+*.log
 
 # Node/Python
 node_modules/

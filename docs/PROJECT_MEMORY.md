@@ -84,6 +84,21 @@ ComfyUI has not been installed yet.
 
 LINE real-world testing requires a public HTTPS webhook URL, usually through a tunnel such as ngrok or Cloudflare Tunnel.
 
+Official LINE setup checklist is stored in `docs/LINE_OFFICIAL_CHECKLIST.md`.
+
+As of 2026-05-06, LINE webhook setup has been tested successfully:
+- LINE Official Account and Messaging API channel were created.
+- `.env` contains `LINE_CHANNEL_SECRET` and `LINE_CHANNEL_ACCESS_TOKEN`.
+- The user initially pasted the token into both fields; this was fixed.
+- `LINE_CHANNEL_SECRET` length was verified as 32 and access token length as 172 without printing secrets.
+- The bot server runs on `127.0.0.1:3000`.
+- Cloudflare quick tunnel was used for public HTTPS webhook testing.
+- Test URL used during setup: `https://birth-bookstore-transcript-parenting.trycloudflare.com/line/webhook`.
+- The quick tunnel URL is temporary and may change after restart.
+- LINE webhook Verify succeeded after correcting `LINE_CHANNEL_SECRET`.
+- `LINE_ALLOWED_USER_IDS` has been set with one approved user ID.
+- Health check after allowlist showed `allowedUserCount: 1`.
+
 ## LINE Bot MVP
 
 The first LINE Bot MVP is implemented as a dependency-free Node.js 20 webhook server in `src/line-bot/server.mjs`.
@@ -99,6 +114,13 @@ Current LINE Bot MVP capabilities:
 - Simple text replies for `help`, `說明`, `幫助`, `狀態`, `status`, `我的ID`, `my id`, `記憶: ...`, `生成短句`, and `生成測試`
 - `記憶: ...` writes durable notes to `docs/session-notes/YYYY-MM-DD.md`
 - `生成短句` / `生成測試` writes a local daily phrase draft to `outputs/YYYY-MM-DD/phrases.json`
+
+The user wants the LINE side to behave more like an AI agent gateway:
+- LINE messages should be passed to an AI assistant for understanding and response.
+- The LINE assistant should read repository memory and continue project context.
+- It should be able to create tasks for Codex/local worker to modify the project.
+- It should not initially have unrestricted file/shell access.
+- Suggested next step: add AI fallback and task queue, e.g. `tasks/pending/*.json`.
 
 This computer has Node.js LTS installed through `winget install --id OpenJS.NodeJS.LTS`. Immediately after installation, the current Codex shell still resolved `node` to an unusable WindowsApps shim and did not see `npm` on PATH. Using explicit paths worked:
 
