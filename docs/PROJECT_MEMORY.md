@@ -69,6 +69,11 @@ YouTube upload:
 - YouTube Data API, after OAuth setup
 - Start with manual review before fully automatic upload
 
+Remote control:
+- The user wants to test LINE as an external conversation/control surface.
+- LINE Bot is not the same as Codex. It will be a project service that receives LINE webhook events and can later trigger local worker tasks.
+- Initial implementation should keep LINE Bot lightweight and use repository memory for continuity.
+
 ## Important Notes
 
 ComfyUI has not been installed yet.
@@ -77,3 +82,12 @@ ComfyUI has not been installed yet.
 
 `http://127.0.0.1:8188/prompt` is the ComfyUI API endpoint for programmatic workflow submission, not a human-facing preview page.
 
+The first LINE Bot MVP is implemented as a dependency-free Node.js 20 webhook server in `src/line-bot/server.mjs`.
+
+Current LINE Bot MVP capabilities:
+- `GET /health`
+- `POST /line/webhook`
+- LINE signature verification
+- Simple text replies for `help`, `狀態`, `記憶: ...`, and `生成測試`
+
+LINE real-world testing requires a public HTTPS webhook URL, usually through a tunnel such as ngrok or Cloudflare Tunnel.

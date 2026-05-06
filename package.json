@@ -1,0 +1,13 @@
+{
+  "name": "english-short-sentence-teaching",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "line:dev": "node src/line-bot/server.mjs",
+    "line:check": "node --check src/line-bot/server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -13,6 +13,14 @@
 - Store output in a daily `phrases.json`.
 - Add validation rules for phrase length, duplicate detection, and translation quality.
 
+## Phase 1A: LINE Bot MVP
+
+- Create a local webhook server.
+- Verify LINE signatures.
+- Reply to basic text commands.
+- Expose the local server through an HTTPS tunnel for real LINE testing.
+- Later connect LINE commands to project memory and local worker tasks.
+
 ## Phase 2: Audio MVP
 
 - Test local TTS quality.
@@ -45,4 +53,3 @@
 - Add OAuth credentials locally.
 - Upload videos as private or scheduled.
 - Move toward full automation only after repeated successful runs.
-

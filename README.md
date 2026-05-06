@@ -37,4 +37,14 @@ Read these files before continuing work on another computer:
 - `docs/PROJECT_MEMORY.md`
 - `docs/ROADMAP.md`
 - `docs/SYNC_GUIDE.md`
+- `docs/LINE_BOT_SETUP.md`
 
+## LINE Bot MVP
+
+Run the local LINE webhook server:
+
+```powershell
+npm run line:dev
+```
+
+See `docs/LINE_BOT_SETUP.md` for LINE Developers setup and HTTPS tunnel notes.
