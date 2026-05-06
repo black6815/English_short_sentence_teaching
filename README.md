@@ -47,4 +47,32 @@ Run the local LINE webhook server:
 npm run line:dev
 ```
 
+Local signed webhook simulation:
+
+```powershell
+npm run line:simulate -- 狀態
+```
+
 See `docs/LINE_BOT_SETUP.md` for LINE Developers setup and HTTPS tunnel notes.
+
+## Content MVP
+
+Generate a reviewable daily phrase draft:
+
+```powershell
+npm run content:generate
+```
+
+This creates:
+
+```text
+outputs/YYYY-MM-DD/phrases.json
+```
+
+The current generator is dependency-free and deterministic by date. It creates 20 English and Chinese phrase pairs, each with the 3 teaching passes required by the video format. `outputs/` is ignored by Git because generated artifacts should stay local unless intentionally exported elsewhere.
+
+Use `--force` to overwrite the same day's draft:
+
+```powershell
+npm run content:generate -- --force
+```

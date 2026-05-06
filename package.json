@@ -4,8 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "content:generate": "node src/content/generate-daily-phrases.mjs",
+    "content:check": "node --check src/content/phrases.mjs && node --check src/content/generate-daily-phrases.mjs",
     "line:dev": "node src/line-bot/server.mjs",
-    "line:check": "node --check src/line-bot/server.mjs"
+    "line:check": "node --check src/line-bot/server.mjs && node --check src/line-bot/simulate-webhook.mjs",
+    "line:simulate": "node src/line-bot/simulate-webhook.mjs"
   },
   "engines": {
     "node": ">=20"

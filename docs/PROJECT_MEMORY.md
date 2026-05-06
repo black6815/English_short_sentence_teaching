@@ -88,6 +88,41 @@ Current LINE Bot MVP capabilities:
 - `GET /health`
 - `POST /line/webhook`
 - LINE signature verification
-- Simple text replies for `help`, `狀態`, `記憶: ...`, and `生成測試`
+- Optional `LINE_ALLOWED_USER_IDS` command allowlist
+- Optional `LINE_REPLY_MODE=log` for local reply logging
+- Local signed webhook simulation through `npm run line:simulate -- <text>`
+- Simple text replies for `help`, `狀態`, `記憶: ...`, `生成測試`, `生成短句`, and `我的ID`
+- `記憶: ...` writes durable notes to `docs/session-notes/YYYY-MM-DD.md`
+- `生成測試` / `生成短句` now writes a local daily phrase draft to `outputs/YYYY-MM-DD/phrases.json`
 
 LINE real-world testing requires a public HTTPS webhook URL, usually through a tunnel such as ngrok or Cloudflare Tunnel.
+
+## Current Content MVP
+
+The first Phase 1 content MVP is implemented as a dependency-free Node.js generator:
+
+- `src/content/phrases.mjs`
+- `src/content/generate-daily-phrases.mjs`
+- `npm run content:generate`
+- `npm run content:check`
+
+The generator currently uses a local curated phrase bank instead of Ollama. This is intentional: it locks down the output schema, validation rules, folder structure, and LINE command integration before adding model variability.
+
+Generated draft structure:
+
+```text
+outputs/YYYY-MM-DD/phrases.json
+```
+
+Each phrase has:
+- English short sentence
+- Chinese translation
+- `repeatCount: 3`
+- Three pass descriptors: audio only, English subtitle, English plus Chinese subtitles
+
+Validation currently checks:
+- Exactly 20 phrases
+- Required IDs, English text, Chinese text
+- Duplicate English phrases
+- Short length limits
+- Three teaching passes per phrase

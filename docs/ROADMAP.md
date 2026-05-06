@@ -9,9 +9,10 @@
 
 ## Phase 1: Content MVP
 
-- Generate 20 phrase pairs in English and Chinese.
-- Store output in a daily `phrases.json`.
-- Add validation rules for phrase length, duplicate detection, and translation quality.
+- Generate 20 phrase pairs in English and Chinese. Done for deterministic local draft generator.
+- Store output in a daily `phrases.json`. Done: `outputs/YYYY-MM-DD/phrases.json`.
+- Add validation rules for phrase length, duplicate detection, and translation quality. Basic validation done; translation quality review still needs human or LLM scoring.
+- Later replace or augment the local phrase bank with Ollama-generated drafts.
 
 ## Phase 1A: LINE Bot MVP
 
@@ -19,7 +20,7 @@
 - Verify LINE signatures.
 - Reply to basic text commands.
 - Expose the local server through an HTTPS tunnel for real LINE testing.
-- Later connect LINE commands to project memory and local worker tasks.
+- Connect LINE commands to project memory and local worker tasks. Started: `生成測試` / `生成短句` creates a local phrase draft.
 
 ## Phase 2: Audio MVP
 
