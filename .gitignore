@@ -1,0 +1,34 @@
+# Secrets
+.env
+.env.*
+credentials/
+tokens/
+client_secret*.json
+
+# Generated outputs
+outputs/
+renders/
+*.mp4
+*.mov
+*.mkv
+*.wav
+*.mp3
+
+# Local model/runtime files
+models/
+ComfyUI/
+ollama/
+
+# Node/Python
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
