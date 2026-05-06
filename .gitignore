@@ -9,6 +9,7 @@ client_secret*.json
 # Generated outputs
 outputs/
 renders/
+*.log
 *.mp4
 *.mov
 *.mkv

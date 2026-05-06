@@ -82,6 +82,10 @@ ComfyUI has not been installed yet.
 
 `http://127.0.0.1:8188/prompt` is the ComfyUI API endpoint for programmatic workflow submission, not a human-facing preview page.
 
+LINE real-world testing requires a public HTTPS webhook URL, usually through a tunnel such as ngrok or Cloudflare Tunnel.
+
+## LINE Bot MVP
+
 The first LINE Bot MVP is implemented as a dependency-free Node.js 20 webhook server in `src/line-bot/server.mjs`.
 
 Current LINE Bot MVP capabilities:
@@ -90,12 +94,30 @@ Current LINE Bot MVP capabilities:
 - LINE signature verification
 - Optional `LINE_ALLOWED_USER_IDS` command allowlist
 - Optional `LINE_REPLY_MODE=log` for local reply logging
+- Local `.env` loading for LINE Bot settings
 - Local signed webhook simulation through `npm run line:simulate -- <text>`
-- Simple text replies for `help`, `狀態`, `記憶: ...`, `生成測試`, `生成短句`, and `我的ID`
+- Simple text replies for `help`, `說明`, `幫助`, `狀態`, `status`, `我的ID`, `my id`, `記憶: ...`, `生成短句`, and `生成測試`
 - `記憶: ...` writes durable notes to `docs/session-notes/YYYY-MM-DD.md`
-- `生成測試` / `生成短句` now writes a local daily phrase draft to `outputs/YYYY-MM-DD/phrases.json`
+- `生成短句` / `生成測試` writes a local daily phrase draft to `outputs/YYYY-MM-DD/phrases.json`
 
-LINE real-world testing requires a public HTTPS webhook URL, usually through a tunnel such as ngrok or Cloudflare Tunnel.
+This computer has Node.js LTS installed through `winget install --id OpenJS.NodeJS.LTS`. Immediately after installation, the current Codex shell still resolved `node` to an unusable WindowsApps shim and did not see `npm` on PATH. Using explicit paths worked:
+
+```text
+C:\Program Files\nodejs\node.exe
+C:\Program Files\nodejs\npm.cmd
+```
+
+Restarting Codex or opening a fresh terminal should normally refresh PATH.
+
+Local validation completed with explicit Node path:
+- `node --check src/line-bot/server.mjs`
+- `node --check src/line-bot/simulate-webhook.mjs`
+- `node --check src/content/phrases.mjs`
+- `node --check src/content/generate-daily-phrases.mjs`
+- Local `/health` test on `http://127.0.0.1:3000/health`
+- Local signed webhook simulation for `狀態`
+- Local signed webhook simulation for `記憶: ...`
+- Local signed webhook simulation for `生成短句`
 
 ## Current Content MVP
 

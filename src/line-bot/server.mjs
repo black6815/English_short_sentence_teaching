@@ -1,15 +1,46 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { writeDailyPhraseDraft } from "../content/phrases.mjs";
+
+loadDotEnv();
 
 const port = Number(process.env.LINE_BOT_PORT || 3000);
 const channelSecret = process.env.LINE_CHANNEL_SECRET;
 const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const allowedUserIds = parseCsvEnv(process.env.LINE_ALLOWED_USER_IDS);
 const replyMode = process.env.LINE_REPLY_MODE || "send";
+
+function loadDotEnv(filePath = ".env") {
+  if (!fsSync.existsSync(filePath)) return;
+
+  const lines = fsSync.readFileSync(filePath, "utf8").split(/\r?\n/);
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+
+    const separatorIndex = trimmed.indexOf("=");
+    if (separatorIndex === -1) continue;
+
+    const key = trimmed.slice(0, separatorIndex).trim();
+    let value = trimmed.slice(separatorIndex + 1).trim();
+
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    if (key && process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  }
+}
 
 function parseCsvEnv(value) {
   if (!value) return [];
@@ -45,7 +76,7 @@ function verifyLineSignature(rawBody, signature) {
 
 async function replyText(replyToken, text) {
   if (replyMode === "log") {
-    console.log(`[LINE reply log mode] ${text}`);
+    console.log(`[LINE reply log mode]\n${text}`);
     return;
   }
 
@@ -161,59 +192,61 @@ async function appendSessionNote(note, source = {}) {
 }
 
 async function buildReply(text, event = {}) {
-  if (["help", "說明", "幫助"].includes(text.toLowerCase())) {
+  const normalized = text.toLowerCase();
+
+  if (["help", "說明", "幫助"].includes(normalized)) {
     return [
       "English short sentence teaching bot is connected.",
-      "Try:",
-      "記憶: 今天決定先測 LINE Bot",
+      "可用指令：",
       "狀態",
-      "生成測試",
+      "我的ID",
+      "記憶: 今天的專案筆記",
       "生成短句",
-      "我的ID"
+      "生成測試"
     ].join("\n");
   }
 
-  if (["我的id", "我的ID", "my id"].includes(text)) {
+  if (["我的id", "我的ID".toLowerCase(), "my id"].includes(normalized)) {
     return event.source?.userId
       ? `你的 LINE userId：${event.source.userId}`
       : "這個事件沒有提供 LINE userId。";
   }
 
-  if (text === "狀態") {
+  if (text === "狀態" || normalized === "status") {
     const status = getConfigStatus();
     return [
-      "LINE Bot 狀態：",
-      `webhook：已啟動，port ${status.port}`,
+      "LINE Bot 狀態",
+      `webhook：本機 port ${status.port}`,
       `channel secret：${status.hasChannelSecret ? "已設定" : "未設定"}`,
       `access token：${status.hasChannelAccessToken ? "已設定" : "未設定"}`,
-      `白名單：${status.allowedUserCount > 0 ? `${status.allowedUserCount} 位` : "未啟用"}`,
+      `允許使用者：${status.allowedUserCount > 0 ? `${status.allowedUserCount} 位` : "未限制"}`,
       `回覆模式：${status.replyMode}`
     ].join("\n");
   }
 
   if (text.startsWith("記憶:") || text.startsWith("記憶：")) {
     const note = text.replace(/^記憶[:：]\s*/, "");
-    if (!note) return "請在「記憶:」後面加上要保存的內容。";
+    if (!note) return "請在「記憶:」後面加上要保存的筆記。";
 
     try {
       const notesFile = await appendSessionNote(note, event.source);
       return `已寫入專案筆記：${notesFile}`;
     } catch (error) {
-      return `寫入專案筆記失敗：${error.message}`;
+      return `寫入筆記失敗：${error.message}`;
     }
   }
 
-  if (text === "生成測試" || text === "生成短句") {
+  if (text === "生成短句" || text === "生成測試") {
     try {
       const result = await writeDailyPhraseDraft({ force: true });
       return [
-        "已建立今日短句草稿。",
+        "已產生今日短句草稿。",
         `檔案：${result.outputFile}`,
         `句數：${result.draft.phrases.length}`,
-        "下一步可人工檢查 phrases.json，再接 TTS 與影片模板。"
+        "下一步可以接 TTS、圖片與影片渲染。"
       ].join("\n");
     } catch (error) {
-      return `建立短句草稿失敗：${error.message}`;
+      return `產生短句草稿失敗：${error.message}`;
     }
   }
 

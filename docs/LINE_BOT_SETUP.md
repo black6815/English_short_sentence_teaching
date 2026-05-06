@@ -1,17 +1,54 @@
 # LINE Bot Setup
 
-This document describes the first LINE Bot MVP for this project.
+This document describes the LINE Bot MVP for this project.
 
 ## What This MVP Does
 
 - Starts a local webhook server.
 - Verifies LINE webhook signatures with `x-line-signature`.
 - Replies to simple text commands.
-- Provides a health check at `/health`.
 - Optionally restricts control to approved LINE user IDs.
 - Writes `記憶: ...` notes to `docs/session-notes/YYYY-MM-DD.md`.
+- Generates a daily `outputs/YYYY-MM-DD/phrases.json` draft.
+- Provides a health check at `/health`.
 
-The server is intentionally dependency-free and uses Node.js 20 built-in APIs.
+The server is dependency-free and uses Node.js 20 built-in APIs.
+
+## Required Local Runtime
+
+Install Node.js LTS, then confirm:
+
+```powershell
+node --version
+npm --version
+```
+
+If Windows still resolves `node` to a blocked WindowsApps shim right after installation, restart the terminal or Codex. As a temporary workaround on Windows, use:
+
+```powershell
+& 'C:\Program Files\nodejs\node.exe' --version
+& 'C:\Program Files\nodejs\npm.cmd' --version
+```
+
+## Local Config
+
+Create `.env` from `.env.example`:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Set these values:
+
+```text
+LINE_CHANNEL_SECRET=...
+LINE_CHANNEL_ACCESS_TOKEN=...
+LINE_BOT_PORT=3000
+LINE_REPLY_MODE=send
+LINE_ALLOWED_USER_IDS=
+```
+
+Use `LINE_REPLY_MODE=log` for local webhook simulation if you do not want the server to call LINE's reply API.
 
 ## Commands
 
@@ -19,6 +56,8 @@ The server is intentionally dependency-free and uses Node.js 20 built-in APIs.
 npm run line:check
 npm run line:dev
 npm run line:simulate -- 狀態
+npm run line:simulate -- "記憶: 測試 LINE 筆記"
+npm run line:simulate -- 生成短句
 ```
 
 Local URLs:
@@ -28,57 +67,27 @@ http://127.0.0.1:3000/health
 http://127.0.0.1:3000/line/webhook
 ```
 
-LINE cannot call `127.0.0.1` directly. For real webhook testing, expose the local server with an HTTPS tunnel such as ngrok, Cloudflare Tunnel, or another public HTTPS endpoint.
+## Public HTTPS Webhook
 
-Example webhook URL after tunneling:
+LINE cannot call `127.0.0.1` directly. For real testing, expose the local server with a public HTTPS tunnel such as ngrok or Cloudflare Tunnel.
+
+Example webhook URL:
 
 ```text
 https://your-tunnel-domain.example/line/webhook
 ```
 
-## Required LINE Settings
+## LINE Developers Console
 
-Create a LINE Developers Messaging API channel, then set local environment variables:
-
-```powershell
-$env:LINE_CHANNEL_SECRET="..."
-$env:LINE_CHANNEL_ACCESS_TOKEN="..."
-$env:LINE_BOT_PORT="3000"
-$env:LINE_REPLY_MODE="send"
-npm run line:dev
-```
-
-Optional local-only reply logging:
-
-```powershell
-$env:LINE_REPLY_MODE="log"
-npm run line:dev
-```
-
-Optional command allowlist:
-
-```powershell
-$env:LINE_ALLOWED_USER_IDS="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-```
-
-In LINE Developers Console:
+Create a LINE Developers Messaging API channel, then:
 
 - Enable webhook usage.
 - Set the webhook URL to your public HTTPS tunnel plus `/line/webhook`.
 - Use the Verify button to test delivery.
-- Add the LINE Official Account as a friend and send `help`.
-- Send `我的ID` to get your LINE user ID, then add it to `LINE_ALLOWED_USER_IDS` if you want command protection.
-
-## Local Webhook Simulation
-
-With the server running, set the same local secret and send a signed fake webhook:
-
-```powershell
-$env:LINE_CHANNEL_SECRET="..."
-npm run line:simulate -- 狀態
-```
-
-This checks local signature verification and webhook routing. The simulated event does not include a `replyToken`, so it will not call LINE's reply API.
+- Add the LINE Official Account as a friend.
+- Send `help`.
+- Send `我的ID` to get your LINE user ID.
+- Add that ID to `LINE_ALLOWED_USER_IDS` after the first test, so only approved users can control the bot.
 
 ## Current Commands
 
@@ -87,16 +96,20 @@ help
 說明
 幫助
 狀態
-記憶: <note>
-生成測試
-生成短句
+status
 我的ID
+my id
+記憶: <note>
+生成短句
+生成測試
 ```
 
 ## Next Steps
 
-1. Test with a real HTTPS tunnel and LINE Developers Verify button.
-2. Add a task queue for local worker jobs.
-3. Expand daily phrase draft commands with date selection and review summaries.
-4. Keep `LINE_ALLOWED_USER_IDS` enabled after the first real user ID is known.
-
+1. Install Node.js LTS on this computer.
+2. Create the LINE Messaging API channel.
+3. Start the local bot server.
+4. Expose it with HTTPS tunneling.
+5. Verify webhook delivery from LINE Developers Console.
+6. Add `LINE_ALLOWED_USER_IDS` after getting the real user ID.
+7. Connect LINE commands to the local worker task queue.

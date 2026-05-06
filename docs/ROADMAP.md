@@ -2,10 +2,10 @@
 
 ## Phase 0: Project Sync And Memory
 
-- Create a Git repository.
-- Push it to a private remote repository.
-- Keep project memory in `docs/PROJECT_MEMORY.md`.
-- Keep setup notes and machine-specific differences out of code when possible.
+- Create a Git repository. Done.
+- Push it to a private remote repository. Done.
+- Keep project memory in `docs/PROJECT_MEMORY.md`. Started.
+- Keep setup notes and machine-specific differences out of code when possible. Started.
 
 ## Phase 1: Content MVP
 
@@ -16,11 +16,14 @@
 
 ## Phase 1A: LINE Bot MVP
 
-- Create a local webhook server.
-- Verify LINE signatures.
-- Reply to basic text commands.
-- Expose the local server through an HTTPS tunnel for real LINE testing.
-- Connect LINE commands to project memory and local worker tasks. Started: `生成測試` / `生成短句` creates a local phrase draft.
+- Create a local webhook server. Done.
+- Verify LINE signatures. Done.
+- Reply to basic text commands. Done.
+- Support local `.env` loading. Done.
+- Add local signed webhook simulation. Done.
+- Expose the local server through an HTTPS tunnel for real LINE testing. Next.
+- Connect LINE commands to project memory and local worker tasks. Started: `記憶: ...` writes session notes, and `生成短句` / `生成測試` creates a local phrase draft.
+- Add command authorization with `LINE_ALLOWED_USER_IDS`. Implemented; real user ID still needs to be collected through LINE.
 
 ## Phase 2: Audio MVP
 
